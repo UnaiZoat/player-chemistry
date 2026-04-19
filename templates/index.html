@@ -84,6 +84,7 @@
 </head>
 <body>
 
+<div class="mob-view" id="view-xi">
 <div class="sidebar">
     <div class="brand">
         <div class="brand-icon">⬡</div>
@@ -112,7 +113,9 @@
     <div class="section-divider"><span>STARTING XI</span></div>
     <div id="selectors" class="player-panel-grid"></div>
 </div>
+</div><!-- /view-xi -->
 
+<div class="mob-view active" id="view-pitch">
 <div class="content">
     <div class="pitch-wrap">
         <div class="pitch-container">
@@ -137,7 +140,9 @@
         </div>
     </div>
 </div>
+</div><!-- /view-pitch -->
 
+<div class="mob-view" id="view-stats">
 <!-- ── PANEL H2H DERECHO ──────────────────────────────────────── -->
 <div class="h2h-panel">
     <div class="section-divider"><span>H2H CHEMISTRY</span></div>
@@ -208,6 +213,21 @@
     </div>
 </div>
 <!-- ── / H2H ─────────────────────────────────────────────────── -->
+</div><!-- /view-stats -->
+
+<!-- ── TAB BAR MÓVIL ─────────────────────────────────────────── -->
+<nav class="mob-tabbar">
+    <button class="mob-tab" id="tab-xi"    onclick="switchView('xi')">
+        <span class="tab-icon">📋</span>XI
+    </button>
+    <button class="mob-tab active" id="tab-pitch" onclick="switchView('pitch')">
+        <span class="tab-icon">⚽</span>PITCH
+    </button>
+    <button class="mob-tab" id="tab-stats" onclick="switchView('stats')">
+        <span class="tab-icon">📊</span>STATS
+    </button>
+</nav>
+<!-- ── / TAB BAR ─────────────────────────────────────────────── -->
 
 <script>
     let allPlayers = [];
@@ -484,7 +504,67 @@
         updateNetwork();
     }
 
+    // ── MOBILE TAB NAVIGATION ───────────────────────────────────
+    function switchView(name) {
+        if (window.innerWidth > 768) return;
+        ['xi', 'pitch', 'stats'].forEach(v => {
+            document.getElementById('view-' + v).classList.toggle('active', v === name);
+            document.getElementById('tab-'  + v).classList.toggle('active', v === name);
+        });
+        // Forzar redibujado del SVG al volver al pitch
+        if (name === 'pitch') updateNetwork();
+    }
+    // ── / MOBILE ────────────────────────────────────────────────
+
+    // ── RANKING TOP PARES ───────────────────────────────────────
+    let currentRankMetric = "offensive";
+
+    function switchRankTab(metric) {
+        currentRankMetric = metric;
+        document.getElementById("tabOff").classList.toggle("active", metric === "offensive");
+        document.getElementById("tabDef").classList.toggle("active", metric === "defensive");
+        loadRanking();
+    }
+
+    async function loadRanking() {
+        const res = await fetch("/top_pairs", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ metric: currentRankMetric, n: 10 })
+        });
+        const pairs = await res.json();
+        renderRanking(pairs);
+    }
+
+    function renderRanking(pairs) {
+        const container = document.getElementById("rankTable");
+        if (!pairs || !pairs.length) {
+            container.innerHTML = `<div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--muted);padding:8px 0;text-align:center;">Sin datos</div>`;
+            return;
+        }
+        const isOff = currentRankMetric === "offensive";
+        const scoreClass = isOff ? "off" : "def";
+        const short = n => { const p = n.split(' '); return p.length > 1 ? p[1] : p[0]; };
+        container.innerHTML = pairs.map(p => {
+            const rankClass = p.rank <= 3 ? `rank-${p.rank}` : "";
+            const score = isOff ? p.offensive : p.defensive;
+            const rawVal = isOff
+                ? (p.joi90 !== null ? `JOI90 ${p.joi90.toFixed(3)}` : "")
+                : (p.jdi90 !== null ? `JDI90 ${p.jdi90.toFixed(3)}` : "");
+            return `
+            <div class="rank-row ${rankClass}" title="${p.player1} & ${p.player2} · ${p.team} · ${rawVal}">
+                <span class="rank-num">${p.rank}</span>
+                <div class="rank-names">
+                    <span class="rank-pair">${short(p.player1)} & ${short(p.player2)}</span>
+                    <span class="rank-meta">${p.team} · ${p.co_games}G · ${rawVal}</span>
+                </div>
+                <span class="rank-score ${scoreClass}">${score.toFixed(1)}</span>
+            </div>`;
+        }).join('');
+    }
+    // ── / RANKING ───────────────────────────────────────────────
+
     init();
-</script>
+    loadRanking();</script>
 </body>
 </html>

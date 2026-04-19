@@ -472,3 +472,124 @@ h2 {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE  (≤ 768px)
+   Layout: tabs en la parte inferior, una vista a la vez.
+   Desktop no se toca — todo está dentro del media query.
+═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+    /* Body pasa a columna: contenido arriba, tab-bar abajo */
+    body {
+        flex-direction: column;
+        height: 100dvh;          /* dvh respeta la barra del navegador */
+        overflow: hidden;
+    }
+
+    /* ── Tab bar inferior ──────────────────────────────────── */
+    .mob-tabbar {
+        display: flex;
+        flex-shrink: 0;
+        height: 56px;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        z-index: 100;
+    }
+    .mob-tab {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-size: 0.55rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: color 0.15s;
+        padding: 0;
+        border-radius: 0;
+    }
+    .mob-tab .tab-icon { font-size: 1.2rem; line-height: 1; }
+    .mob-tab.active    { color: var(--primary); }
+    .mob-tab.active .tab-icon { filter: drop-shadow(0 0 6px rgba(56,189,248,0.6)); }
+
+    /* ── Área de vistas ────────────────────────────────────── */
+    /* Cada sección ocupa todo el espacio disponible arriba del tab-bar */
+    .mob-view {
+        display: none;
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+    }
+    .mob-view.active { display: flex; flex-direction: column; }
+
+    /* ── Sidebar → vista STARTING XI ──────────────────────── */
+    .sidebar {
+        width: 100%;
+        min-width: unset;
+        border-right: none;
+        overflow-y: visible;   /* el scroll lo maneja .mob-view */
+        padding-bottom: 0;
+    }
+
+    /* ── Pitch → vista PITCH ───────────────────────────────── */
+    .content {
+        padding: 10px;
+        overflow: hidden;
+    }
+    .pitch-wrap { align-items: flex-start; }
+    .pitch-container {
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+    }
+    #pitch {
+        width: 100%;
+        height: auto;
+        max-height: calc(100dvh - 130px);  /* espacio para tab-bar + padding */
+    }
+
+    /* ── Panel derecho → vista STATS ──────────────────────── */
+    .h2h-panel {
+        width: 100%;
+        min-width: unset;
+        border-left: none;
+        overflow-y: visible;
+    }
+
+    /* Grid alineación: 2 col en móvil está bien, pero más compacto */
+    .player-panel-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+        padding: 4px 10px 10px;
+    }
+    .player-panel-grid .select-wrap select { font-size: 0.68rem; padding: 4px 5px; }
+
+    /* Botones más grandes para touch */
+    .btn-max, .btn-min { padding: 12px 10px; font-size: 0.82rem; }
+
+    /* Ranking más legible en pantalla estrecha */
+    .rank-row { grid-template-columns: 16px 1fr auto; gap: 5px; padding: 6px 8px; }
+    .rank-pair { font-size: 0.65rem; }
+    .rank-meta { font-size: 0.56rem; }
+    .rank-score { font-size: 0.78rem; }
+
+    /* Ocultar tab-bar en desktop */
+}
+
+/* En desktop, ocultar la tab-bar y dejar todo visible */
+@media (min-width: 769px) {
+    .mob-tabbar { display: none; }
+    /* Las vistas son siempre visibles en desktop */
+    .mob-view         { display: contents !important; }
+    /* sidebar y h2h-panel recuperan su comportamiento flex normal */
+    .sidebar   { overflow-y: auto; }
+    .h2h-panel { overflow-y: auto; }
+}
