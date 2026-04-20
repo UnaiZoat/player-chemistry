@@ -314,7 +314,7 @@ button {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 18px;
+    padding: 8px;
     overflow: hidden;
     background: radial-gradient(ellipse at 70% 30%, rgba(56,189,248,0.03) 0%, transparent 60%);
 }
@@ -457,7 +457,7 @@ h2 {
 
 #pitch {
     height: 100%;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 16px);
     border-radius: 8px;
     filter: drop-shadow(0 4px 30px rgba(0,0,0,0.4));
 }
@@ -473,8 +473,83 @@ h2 {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-/* ═══════════════════════════════════════════════════════════════
-   MOBILE  (≤ 768px)
+/* ── H2H PANEL (right column) ────────────────────────────────── */
+.h2h-panel {
+    width: 220px;
+    min-width: 220px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+.h2h-panel .section-divider { padding: 14px 14px 6px; }
+.h2h-panel .control-group   { padding: 6px 14px; }
+
+#h2hResult {
+    margin: 0 14px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    animation: fadeIn 0.3s ease;
+}
+#h2hResult.hidden { display: none; }
+
+.raw-metrics {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.raw-metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.raw-label {
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+.raw-val {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+/* ── SIDEBAR WIDTH ───────────────────────────────────────────── */
+.sidebar { width: 360px; min-width: 360px; }
+
+/* ── PLAYER PANEL GRID (lineup slots) ───────────────────────── */
+.player-panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    padding: 4px 12px 8px;
+}
+.player-panel-grid .player-slot  { padding: 6px 8px 5px; border-radius: 6px; }
+.player-panel-grid .slot-header  { margin-bottom: 4px; }
+.player-panel-grid .slot-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+.player-panel-grid .select-wrap select {
+    padding: 5px 6px;
+    font-size: 0.7rem;
+    border-color: transparent;
+}
+
+/*
    Layout: tabs en la parte inferior, una vista a la vez.
    Desktop no se toca — todo está dentro del media query.
 ═══════════════════════════════════════════════════════════════ */
@@ -574,12 +649,6 @@ h2 {
 
     /* Botones más grandes para touch */
     .btn-max, .btn-min { padding: 12px 10px; font-size: 0.82rem; }
-
-    /* Ranking más legible en pantalla estrecha */
-    .rank-row { grid-template-columns: 16px 1fr auto; gap: 5px; padding: 6px 8px; }
-    .rank-pair { font-size: 0.65rem; }
-    .rank-meta { font-size: 0.56rem; }
-    .rank-score { font-size: 0.78rem; }
 
     /* Ocultar tab-bar en desktop */
 }
