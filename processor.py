@@ -89,7 +89,7 @@ def responsibility(grid_p, grid_q, grid_opp):
     return (rp + rq) / 2.0
 
 # ---------------------------------------------------------------------------
-# 2. VAEP proxy (xG posicional sin socceraction)
+# 2. VAEP proxy (xG posicional)
 # ---------------------------------------------------------------------------
 GOAL_X = 120.0
 GOAL_Y = 40.0
@@ -230,8 +230,6 @@ def process_chemistry():
 
         # JDI: rendimiento de oponentes vs. prior posicional
         if events:
-            # Bug fix: agrupar VAEP real por jugador Y por equipo
-            # opp_vaep[team][player] para distinguir a qué equipo pertenece cada acción
             opp_vaep_by_team = defaultdict(lambda: defaultdict(float))
             for ev in events:
                 opp_vaep_by_team[ev["team"]][ev["player"]] += vaep_proxy(ev)
@@ -260,7 +258,6 @@ def process_chemistry():
     # ── Construir CSV con normalización adaptativa ────────────────────────
     # En lugar de usar los máximos del paper (calibrados con ligas enteras),
     # normalizamos contra el percentil 95 del propio dataset del Mundial.
-    # Esto es honesto: la escala [0,10] es relativa a este torneo.
     rows_raw = []
     for team_name, pairs in chemistry_data.items():
         for (p1, p2), stats in pairs.items():
@@ -286,7 +283,6 @@ def process_chemistry():
             return s[min(idx, len(s)-1)]
 
         joi_p95 = percentile(joi_vals, 95) or 0.01
-        # JDI puede ser negativo: escalamos entre p5 y p95
         jdi_p5  = percentile(jdi_vals, 5)
         jdi_p95 = percentile(jdi_vals, 95)
         jdi_range = (jdi_p95 - jdi_p5) or 0.01

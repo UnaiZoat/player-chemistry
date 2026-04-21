@@ -148,7 +148,7 @@
     <div id="h2hResult" class="hidden">
         <div class="h2h-names">
             <span id="h2hN1">—</span>
-            <span class="vs-sep">vs</span>
+            <span class="vs-sep">&</span>
             <span id="h2hN2">—</span>
         </div>
         <div class="h2h-bar-wrap" style="margin: 10px 0 6px;">
@@ -454,7 +454,7 @@
             edgesG.appendChild(hitLine);
         });
 
-        // Mover tooltip al final para que quede encima de todo
+
         edgesG.appendChild(tooltip);
 
         selects.forEach((s, i) => {
@@ -463,7 +463,6 @@
             const nameParts = s.value.split(' ');
             const displayName = (nameParts.length > 1 ? nameParts[1] : nameParts[0]).toUpperCase();
 
-            // Color por categoría de posición
             const cat = config.slots[i];
             const catColor = { PO: "#fbbf24", DF: "#38bdf8", MC: "#a78bfa", DL: "#4ade80" }[cat] || "#38bdf8";
             const catGlow  = { PO: "rgba(251,191,36,0.4)", DF: "rgba(56,189,248,0.4)", MC: "rgba(167,139,250,0.4)", DL: "rgba(74,222,128,0.4)" }[cat] || "rgba(56,189,248,0.4)";
@@ -503,7 +502,6 @@
             document.getElementById('view-' + v).classList.toggle('active', v === name);
             document.getElementById('tab-'  + v).classList.toggle('active', v === name);
         });
-        // Forzar redibujado del SVG al volver al pitch
         if (name === 'pitch') updateNetwork();
     }
     // ── / MOBILE ────────────────────────────────────────────────
