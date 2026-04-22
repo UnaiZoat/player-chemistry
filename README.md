@@ -10,7 +10,7 @@ This challenge quantifies the offensive and defensive chemistry between pairs of
 
 **Live demo:** [player-chemistry.onrender.com](https://player-chemistry.onrender.com/)
 
-**Dataset:** [StatsBomb Open Data](https://github.com/statsbomb/open-data) — FIFA World Cup 2022 (64 matches, ~830 players)
+**Dataset:** [StatsBomb Open Data](https://github.com/statsbomb/open-data) — FIFA World Cup 2022 and 2018 (128 matches)
 
 ---
 
@@ -53,9 +53,10 @@ soccersolver/
 # 1. Clone and install dependencies
 git clone https://github.com/UnaiZoat/player-chemistry.git
 cd soccersolver
-pip install requirements.txt
+pip install -r requirements.txt
 
 # 2. Download data from StatsBomb (takes ~10 min, downloads 128 matches)
+# You can skip 2 and 3 if the files are already on data/
 python data_loader.py
 
 # 3. Compute chemistry scores
