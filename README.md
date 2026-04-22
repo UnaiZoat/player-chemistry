@@ -7,9 +7,11 @@
 ## What it does
 
 This challenge quantifies the offensive and defensive chemistry between pairs of players from the 2018 and 2022 FIFA World Cups, following the JOI/JDI methodology introduced in the paper. Given any squad, it renders an interactive pitch network where edge thickness and colour show how well each pair of players gels together — and automatically assembles the maximum- or minimum-chemistry starting XI.
+
 **Live demo:** [player-chemistry.onrender.com](https://player-chemistry.onrender.com/)
 
 **Dataset:** [StatsBomb Open Data](https://github.com/statsbomb/open-data) — FIFA World Cup 2022 (64 matches, ~830 players)
+
 ---
 
 ## Features
