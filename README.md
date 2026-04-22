@@ -6,11 +6,9 @@
 
 ## What it does
 
-This challenge quantifies the offensive and defensive chemistry between pairs of players from the 2022 FIFA World Cup, following the JOI/JDI methodology introduced in the paper. Given any squad, it renders an interactive pitch network where edge thickness and colour show how well each pair of players play together — and automatically assembles the maximum- or minimum-chemistry starting XI.
-
-**Live demo:** [player-chemistry.onrender.com](https://player-chemistry.onrender.com/)
-
-**Dataset:** [StatsBomb Open Data](https://github.com/statsbomb/open-data) — FIFA World Cup 2022 (64 matches, ~830 players)
+This challenge quantifies the offensive and defensive chemistry between pairs of players from the 2018 and 2022 FIFA World Cups, following the JOI/JDI methodology introduced in the paper. Given any squad, it renders an interactive pitch network where edge thickness and colour show how well each pair of players gels together — and automatically assembles the maximum- or minimum-chemistry starting XI.
+Live demo: player-chemistry.onrender.com
+Dataset: StatsBomb Open Data — FIFA World Cup 2018 + 2022 (128 matches, ~1,400 players)
 
 ---
 
@@ -55,7 +53,7 @@ git clone https://github.com/UnaiZoat/player-chemistry.git
 cd soccersolver
 pip install requirements.txt
 
-# 2. Download data from StatsBomb (takes ~5 min, downloads 64 matches)
+# 2. Download data from StatsBomb (takes ~10 min, downloads 128 matches)
 python data_loader.py
 
 # 3. Compute chemistry scores
@@ -76,9 +74,13 @@ This section documents every decision that deviates from — or approximates —
 
 ### Data source
 
-The paper uses proprietary Wyscout event data across 361 seasons and 106 competitions. This implementation uses StatsBomb Open Data (free, no login), specifically the 2022 FIFA World Cup (competition\_id=43, season\_id=106): 64 matches with full event streams including passes, carries, dribbles and shots with pitch coordinates.
+The paper uses proprietary Wyscout event data across 361 seasons and 106 competitions. This implementation uses StatsBomb Open Data (free, no login), specifically the FIFA World Cups 2018 (competition_id=43, season_id=3) and 2022 (competition_id=43, season_id=106): 128 matches combined, with full event streams including passes, carries, dribbles and shots with pitch coordinates.
 
-**Trade-off:** The World Cup has a maximum of 7 matches per team, so pairs can co-appear at most 7 times. The paper works with full league seasons (38+ matches), which produces much richer co-appearance signals. This is the single biggest limitation of this dataset choice.
+**Why two World Cups instead of one:** The paper notes that a minimum of ~700 minutes together is needed before JOI/JDI values become statistically reliable. A single World Cup caps co-appearance at 7 matches per pair (~630 minutes), just below that threshold. Adding the 2018 edition doubles the potential signal for players who participated in both tournaments (Messi, Modric, Mbappé, Busquets and many others), pushing those pairs well above the reliability threshold and making their chemistry scores meaningfully comparable.
+
+**Multi-tournament accumulation:** Chemistry is accumulated across both tournaments for the same pair of players. This is a deliberate methodological choice — it mirrors how the paper accumulates data across multiple seasons for club players. The tournament field is stored in raw_matches.json for traceability.
+
+**Remaining trade-off:** Players who only appeared in one tournament are still limited to 7 matches of signal. Chemistry scores are normalised relative to the p95 of the combined dataset (see Score normalisation below), so the scale is self-consistent within this data.
 
 ### VAEP approximation
 
@@ -142,10 +144,11 @@ The auto-XI follows the optimisation objective — maximise (or minimise) the su
 
 ## Limitations
 
-- **7-match ceiling:** The World Cup limits co-appearance to 7 matches per pair. Chemistry scores are relative to this tournament only and should not be compared with paper results from full league seasons.
+- **Tournament ceiling:** Players who appeared in only one World Cup are still limited to 7 matches of co-appearance signal. The dual-tournament approach helps players present in both editions.
 - **No substitution tracking:** Minutes together defaults to 90 for all starters. Partial appearances are not modelled.
 - **VAEP proxy:** The positional xG model underestimates the value of defensive actions and does not capture off-ball contributions. A trained VAEP model would require a much larger historical event dataset.
 - **Single position per player:** StatsBomb records the starting position; players who change roles mid-game retain their initial position in the responsibility grid.
+  **Cross-tournament accumulation:** Chemistry is summed across 2018 and 2022 without accounting for changes in player ability, age or role between tournaments. This is consistent with how the paper treats multi-season club data.
 
 ---
 
